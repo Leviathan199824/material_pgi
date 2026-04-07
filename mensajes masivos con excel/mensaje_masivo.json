@@ -1,0 +1,159 @@
+{
+  "name": "mensaje_masivo",
+  "nodes": [
+    {
+      "parameters": {
+        "fileSelector": "/home/node/.n8n-files/contactos.xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -560,
+        144
+      ],
+      "id": "e24cecd6-bd62-41cf-ac8f-db4ccfd63c89",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -352,
+        144
+      ],
+      "id": "426d7df8-c0ed-426c-978f-c54c6af72ccb",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "59f878a2-23f6-4408-8e0b-2dd73b9f2c31",
+              "name": "mensaje_final",
+              "value": "=Buenas tardes, estimado {{ $json[\"Nombre\"] }} {{ $json[\"Apellido paterno\"] }}\n\nMe comunico de parte del Postgrado en Informática de la FCPN-UMSA. En su momento usted manifestó interés en nuestro programa de doctorado, y nos complace informarle que las inscripciones para el *Doctorado en Informática Aplicada* ya están abiertas con inicio de clases en mayo de 2026.\n\nA continuación le adjuntamos la información completa del programa. Si tiene alguna consulta adicional, con gusto le atendemos por este medio.\n\nEsperamos contar con su participación en esta nueva generación de doctorantes.\n\nSaludos cordiales,\n*Postgrado en Informática — FCPN, UMSA*",
+              "type": "string"
+            },
+            {
+              "id": "3e6974ac-5cbc-4e7d-a1b1-7a0f8ac00c40",
+              "name": "numero",
+              "value": "=591{{ $json[\"numero\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -160,
+        144
+      ],
+      "id": "b98ce5d4-5806-4a4d-b74f-c30200689c5b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://evolution-api:8080/message/sendMedia/bot-cursos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "DEBB442AAF81-4218-91D1-9DF90D6ABD47"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.numero }}"
+            },
+            {
+              "name": "mediatype",
+              "value": "document"
+            },
+            {
+              "name": "media",
+              "value": "https://raw.githubusercontent.com/Leviathan199824/material_pgi/main/broshure/BROCHURE_DOCTORADO.pdf"
+            },
+            {
+              "name": "fileName",
+              "value": "=BROCHURE_DOCTORADO_FCPN.pdf"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.mensaje_final }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        80,
+        144
+      ],
+      "id": "1e25fb94-2d29-43f5-84bc-b7b78be2f717",
+      "name": "HTTP Request1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "76e4777c-47a8-4fd3-ba5d-de01d451083b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "47cd99bd110b54f43d1851e022ad41082e1eb94f474cf2e37667968e95dfc7f8"
+  },
+  "id": "IIh2PKocqoLGqHig",
+  "tags": []
+}

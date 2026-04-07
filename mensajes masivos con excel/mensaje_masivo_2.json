@@ -1,0 +1,154 @@
+{
+  "name": "mensaje_masivo_2",
+  "nodes": [
+    {
+      "parameters": {
+        "fileSelector": "/home/node/.n8n-files/contactos.xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -240,
+        48
+      ],
+      "id": "45cdf8ca-eb37-4a75-b3e6-bc24ad856dd7",
+      "name": "Read/Write Files from Disk1"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -32,
+        48
+      ],
+      "id": "a9873ed5-57d2-4f92-ba46-2756b7095f01",
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "59f878a2-23f6-4408-8e0b-2dd73b9f2c31",
+              "name": "mensaje_final",
+              "value": "=🎓 *𝑫𝑶𝑪𝑻𝑶𝑹𝑨𝑫𝑶 𝑬𝑵 𝑰𝑵𝑭𝑶𝑹𝑴𝑨́𝑻𝑰𝑪𝑨 𝑨𝑷𝑳𝑰𝑪𝑨𝑫𝑨* 🚀\n\nHola {{ $json.Nombre }} {{ $json['Apellido paterno'] }},\n\n💻 *MODALIDAD:*\n🏫 Semipresencial\n\n⏳ *DURACIÓN:*\n5 semestres\n\n📚 *ÁREA DE FUNDAMENTOS* (1er semestre)\n🔬 *ÁREA DE ESPECIALIZACIÓN* (2do semestre)\n🧪 *ÁREA DE INVESTIGACIÓN Y DESARROLLO* (3er, 4to y 5to semestre)\n\n🎓 *PARA OBTENER EL TÍTULO NECESITARÁS:*\n✅ Acumular 79 créditos\n✅ Certificar suficiencia en un idioma extranjero\n✅ Publicar 2 artículos científicos en revistas indexadas\n✅ Aprobar y defender tu tesis doctoral\n\n💰 *COSTO DEL DOCTORADO:*\n🏛️ Colegiatura: Bs. 30.000\n(puede cancelar en 15 cuotas de Bs. 2.000)\n\n💰 *AL CONTADO:* Bs. 28.000\n➕ Matrícula: Bs. 1.679 (una por año)\n\n🔖 Para empezar su inscripción, debe llenar el *FORMULARIO DE ADMISIÓN* 👉🏽 https://forms.gle/dubvJ8DRcULJPfue6\n\n🎉 ¡INICIO DE CLASES 2026!\n\n📱 *GRUPO DE WHATSAPP:* https://chat.whatsapp.com/KCPx2LQKZJK4xcHSHQ4hiO\n\n📍 *OFICINAS:*\nMonoblock Central, segundo patio, lado del FEDSIDUMSA\n\n📞 *CONTACTOS:*\nWhatsApp: 62531209",
+              "type": "string"
+            },
+            {
+              "id": "3e6974ac-5cbc-4e7d-a1b1-7a0f8ac00c40",
+              "name": "numero",
+              "value": "=591{{ $json[\"numero\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        176,
+        48
+      ],
+      "id": "e47cd5ac-6a3d-47cf-8c29-e1dd42558a7e",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://evolution-api:8080/message/sendMedia/bot-cursos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "DEBB442AAF81-4218-91D1-9DF90D6ABD47"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.numero }}"
+            },
+            {
+              "name": "mediatype",
+              "value": "image"
+            },
+            {
+              "name": "media",
+              "value": "https://raw.githubusercontent.com/Leviathan199824/imagenes_pgi/main/DINA.jpeg"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.mensaje_final }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        400,
+        48
+      ],
+      "id": "ef9a0515-7cde-45fa-91f0-7c60094da9b6",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Read/Write Files from Disk1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "fdb7b574-6146-450e-9388-d48e8f4499bc",
+  "meta": {
+    "instanceId": "47cd99bd110b54f43d1851e022ad41082e1eb94f474cf2e37667968e95dfc7f8"
+  },
+  "id": "adtElFdPZUCMYiBW",
+  "tags": []
+}
