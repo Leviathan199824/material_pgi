@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: chatbot-full-stack
+  namespace: chatbot-umsa
+  labels:
+    app: chatbot
+spec:
+  containers:
+  # --- CONTENEDOR 1: POSTGRES (Base de Datos) ---
+  - name: postgres
+    image: postgres:15
+    env:
+    - name: POSTGRES_DB
+      value: "evolution"
+    - name: POSTGRES_USER
+      value: "evolution"
+    - name: POSTGRES_PASSWORD
+      value: "evolution"
+    ports:
+    - containerPort: 5432
+
+  # --- CONTENEDOR 2: REDIS (Caché) ---
+  - name: redis
+    image: redis:7
+    ports:
+    - containerPort: 6379
+
+  # --- CONTENEDOR 3: N8N (Lógica y Flujos) ---
+  - name: n8n
+    image: n8nio/n8n:latest
+    env:
+    - name: GENERIC_TIMEZONE
+      value: "America/La_Paz"
+    ports:
+    - containerPort: 5678
+
+  # --- CONTENEDOR 4: EVOLUTION API (WhatsApp) ---
+  - name: evolution-api
+    image: evoapicloud/evolution-api:latest
+    env:
+    - name: DATABASE_PROVIDER
+      value: "postgresql"
+    - name: DATABASE_CONNECTION_URI
+      value: "postgres://evolution:evolution@localhost:5432/evolution"
+    - name: CACHE_REDIS_ENABLED
+      value: "true"
+    - name: CACHE_REDIS_URI
+      value: "redis://localhost:6379"
+    - name: SERVER_URL
+      value: "http://localhost:8080"
+    ports:
+    - containerPort: 8080
